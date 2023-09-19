@@ -58,7 +58,6 @@ const Register = () => {
         }
         const response = await signingUp(payload)
         if (response) {
-          console.log(response,'ini response')
           sessionStorage.setItem("token", response?.data?.token)
           dispatch(token())
           dispatch(

@@ -10,9 +10,7 @@ module.exports.insert = async (data) => {
 
     const query = `INSERT INTO "users" (email, password, name, created_at, updated_at) 
                     VALUES ('${data.email}', '${hash}', '${data.name}', 'now()', 'now()') returning *;`;
-    console.log('query:', query);
     const res = await client.query(query);
-    console.log('res:', res);
     return res.rows[0];
   } catch (err) {
     console.log(err);
@@ -35,7 +33,6 @@ module.exports.findOneByUsername = async (data) => {
   try {
     const query = `SELECT u.* FROM users u 
                     WHERE u.email = '${data.email}' AND u.is_active = 'true';`
-    console.log("query", query);
     const res = await client.query(query);
     return res.rows[0];
   } catch (err) {
@@ -52,7 +49,6 @@ module.exports.findOneById = async (data) => {
   const client = await pool.connect();
   try {
     const query = `SELECT u.* FROM users u where u.id = ${data.id} AND u.is_active = 'true' `;
-    console.log('query:', query);
     const res = await client.query(query);
     return res.rows[0];
   } catch (err) {
@@ -74,9 +70,7 @@ module.exports.updateLastUserLogin = async (id) => {
 
   try {
       var query = `UPDATE users SET invalid_login_count = 0 WHERE id= ${id}`;
-      console.log('query:', query);
       const res = await client.query(query);
-      console.log('res:', res);
       return res.rows[0];
   } catch (err) {
       console.log(err);
@@ -97,9 +91,7 @@ module.exports.count_invalid_count = async (id, invalid_loogin_counter) => {
 
   try {
       var query = `UPDATE users SET invalid_login_count = ${invalid_loogin_counter} WHERE user_id= ${id} `;
-      console.log('query:', query);
       const res = await client.query(query);
-      console.log('res:', res);
       return res.rows[0];
   } catch (err) {
       console.log(err);
@@ -120,9 +112,7 @@ module.exports.lockedAccount = async (id) => {
 
   try {
       var query = `UPDATE users SET is_locked = true WHERE user_id= ${id} `;
-      console.log('query:', query);
       const res = await client.query(query);
-      console.log('res:', res);
       return res.rows[0];
   } catch (err) {
       console.log(err);
@@ -157,20 +147,14 @@ module.exports.getDataPagination = async (showentry, page, order, key, search) =
 
       
       if(page > 1 ){
-        console.log(page,'ini page')
-        console.log(showentry,'ini se')
         offset = (page * showentry) - showentry;
-        console.log(offset, 'ini offset')
       }
       
       if (showentry) {
-        console.log(showentry, 'ini show entry')
         query_count_user += ` LIMIT ${showentry} `;
       }
 
-      console.log(query_count_user, 'ini query count user')
       const res_count_user = await client.query(query_count_user);
-      console.log(res_count_user.rows, 'ini ya')
 
       if(res_count_user.rows.length>0){
         count = res_count_user.rows[0].count;
@@ -203,12 +187,9 @@ module.exports.getDataPagination = async (showentry, page, order, key, search) =
           query_select_user += ` OFFSET ${offset} `;
       }
 
-      console.log("query_select_user: ", query_select_user);
       
       const res_list_user = await client.query(query_select_user);
       const users =  res_list_user.rows;
-      console.log(count, 'ini count')
-      console.log(page, 'ini current page')
       const result = {
         totalFiltered :count,
         currentPage: page,
@@ -326,9 +307,7 @@ module.exports.UpdateDataUser = async (id, data) => {
 
       query += ` updated_at = now()  where  user_id ='${id}' returning * `
           
-      console.log('query:', query);
       const res = await client.query(query);
-      console.log('res:', res);
       return res.rows[0];
   } catch (err) {
       console.log(err);
@@ -355,7 +334,6 @@ module.exports.findByIdAndRemove = async (id) => {
         // const query_del = ` DELETE FROM users where user_id = '${id}' AND is_active = 'true' `;
         const query_del = ` Update users set is_active = 'false', is_delete = 'true'  where  user_id = '${id}' `;
         const res_del = await client.query(query_del);
-        console.log('res_del:', res_del);
         return "success";
       }else{
         return  "User Not Found";

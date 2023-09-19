@@ -139,9 +139,7 @@ module.exports.upsertBak = async (products, product_detail, store) => {
                           updated_at = now()
                           Returning product_id
                         `;
-      console.log('qry_upsert_prod:', qry_upsert_prod);
       const res_qry_upsert_prod = await client.query(qry_upsert_prod);
-      console.log('res:', res_qry_upsert_prod);
       const product_id = res_qry_upsert_prod.rows[0].product_id;
 
       
@@ -151,7 +149,6 @@ module.exports.upsertBak = async (products, product_detail, store) => {
       for (let i = 0; i < product_detail.length; i++) {
         const query_product_detail = `INSERT INTO "product_detail" (product_id, attribute_id, value_attribute ) 
         VALUES (${product_id}, ${product_detail[i].attribute_id}, '${product_detail[i].value_attribute}')`;
-        console.log('query_product_detail:', query_product_detail);
         await client.query(query_product_detail);
         
       }
@@ -242,9 +239,7 @@ module.exports.updateProduct = async (id, data) => {
 
       query_update_product += ` updated_at = now() where id ='${id}' returning * `
           
-      console.log('query_update_product:', query_update_product)
       const res_update_product = await client.query(query_update_product)
-      console.log('res:', res_update_product)     
   
       if(res_update_product?.rows?.[0]){
         await client.query("COMMIT")
@@ -306,9 +301,7 @@ module.exports.getDataProductPagination = async (payload) => {
       } else if(payload.search){
           query_count_product += ` AND (p.keyword LIKE $$% ` + payload.search.toLowerCase() + `%$$) `;
       }
-      console.log("query_count_product: ", query_count_product)
       const res_tot_data = await client.query(query_count_product);
-      console.log("total data:" , res_tot_data.rows[0].count);
       const total_data = res_tot_data.rows[0].count;
      
       if(payload.page > 1 ){
@@ -323,7 +316,6 @@ module.exports.getDataProductPagination = async (payload) => {
         query_count_product += ` OFFSET ${offset} `;
       }
 
-      console.log("query_count_product: ", query_count_product);
       const res_count_product = await client.query(query_count_product);
   
       if(res_count_product.rows.length>0){
@@ -392,7 +384,6 @@ module.exports.getDataProductPagination = async (payload) => {
         query_select_product += ` OFFSET ${offset} `;
       }
 
-      console.log("query_select_product: ", query_select_product);
       
       const res_list_store = await client.query(query_select_product);
       const stores =  res_list_store.rows;
@@ -430,9 +421,7 @@ module.exports.getDataProductPagination1 = async (payload) => {
         query_count_product += ` AND (lower(p.name) ILIKE '%${payload?.search}%')`;
       }
 
-      console.log("query_count_product: ", query_count_product)
       const res_tot_data = await client.query(query_count_product);
-      console.log("total data:" , res_tot_data?.rows[0]?.count);
       const total_data = res_tot_data?.rows[0]?.count;
      
       if(payload.page > 1 ){
@@ -447,7 +436,6 @@ module.exports.getDataProductPagination1 = async (payload) => {
         query_count_product += ` OFFSET ${offset} `;
       }
 
-      console.log("query_count_product: ", query_count_product);
       const res_count_product = await client.query(query_count_product);
   
       if(res_count_product?.rows.length > 0){
@@ -462,7 +450,6 @@ module.exports.getDataProductPagination1 = async (payload) => {
           query_select_product += ` WHERE p.is_delete = false `;
 
       if (payload.search) {
-        console.log("tidak masuk kondisi lense")
         query_select_product += ` AND (lower(p.name) ILIKE '%${payload?.search}%')`;
       }
 
@@ -480,7 +467,6 @@ module.exports.getDataProductPagination1 = async (payload) => {
         query_select_product += ` OFFSET ${offset} `;
       }
 
-      console.log("query_select_product: ", query_select_product);
       
       let res_list_store = await client.query(query_select_product);
 
@@ -509,7 +495,6 @@ module.exports.findDetailProduct = async (data) => {
     FROM product p  
     INNER JOIN category c on p.categoryid = c.id  
     WHERE  p.is_delete = false AND p.id = ${data.product_id} `;
-    console.log('query:', query);
     const res = await client.query(query);
     return res.rows[0];
   } catch (err) {
@@ -526,7 +511,6 @@ module.exports.countStockProduct = async (data) => {
   const client = await pool.connect();
   try {
     const query = `select product_stock from product where product_id = ${data.id} and is_delete = false `;
-    console.log('query:', query);
     const res = await client.query(query);
     return res.rows[0];
   } catch (err) {
@@ -548,7 +532,6 @@ module.exports.getAllProduct = async (fiter_by_name) => {
       join product_detail pd on p.product_id= pd.product_id  
       join attribute a  on pd.attribute_id  = a.attribute_id  
       where p.is_delete = false `;
-      console.log(query);
       const res_query = await client.query(query);
       return res_query.rows;
   } catch (err) {
@@ -573,7 +556,6 @@ module.exports.getAllAttribute = async (fiter_by_name) => {
       if(fiter_by_name){
          query += ` where attribute_name = '${fiter_by_name}' `
       }
-      console.log(query);
       const res_query = await client.query(query);
       return res_query.rows;
   } catch (err) {
@@ -597,7 +579,6 @@ module.exports.getAttributProduct = async (data) => {
       if(data.product_id){
          query += `  where pd.product_id = ${data.product_id} `
       }
-      console.log("query getAttributProduct: ", query);
       const res_query = await client.query(query);
       return res_query.rows;
   } catch (err) {
@@ -626,7 +607,6 @@ module.exports.getProductType = async (payload) => {
           query  += ` where product_type_name = '${payload.category}' `;
         }
       }
-      console.log(query);
       const result = await client.query(query);
       return result.rows;
   } catch (err) {
@@ -650,7 +630,6 @@ module.exports.getProductTypeByProductId = async (product_id) => {
       let query = `select p.*, pt.product_type_name  from product p `;
           query += ` join product_type pt on p.product_type_id  = pt.product_type_id `;
           query += ` where p.product_id  = ${product_id};`
-      console.log(query);
       const result = await client.query(query);
       return result.rows[0];
   } catch (err) {
@@ -667,7 +646,6 @@ module.exports.findOneById = async (data) => {
   const client = await pool.connect();
   try {
     const query = `SELECT * FROM product where product_id = ${data.id} AND is_delete = 'false' `;
-    console.log('query:', query);
     const res = await client.query(query);
     return res.rows[0];
   } catch (err) {
@@ -686,7 +664,6 @@ module.exports.findPriceProduct = async (product_id, store_id, stock_category) =
     const query = `SELECT p.keyword , ssp.store_price_product FROM store_stock_product ssp 
                   join product p on ssp.product_id  = p.product_id 
                   where p.product_id = ${product_id} AND  ssp.store_id = ${store_id} and ssp.stock_category = '${stock_category}' `;
-    console.log('query:', query);
     const res = await client.query(query);
     return res.rows[0];
   } catch (err) {
@@ -703,7 +680,6 @@ module.exports.findById = async (arr_product_id) => {
   const client = await pool.connect();
   try {
     const query = `SELECT * FROM product where product_id in(${arr_product_id}) `;
-    console.log('query:', query);
     const res = await client.query(query);
     return res.rows;
   } catch (err) {
@@ -725,9 +701,7 @@ module.exports.softDeleteProduct = async (id) => {
       const count = res_query_selct.rows[0].count;
       if(count == 1){
         const query_del = ` UPDATE product SET is_delete = true, updated_at = now() where id = ${id} `;
-        console.log(query_del);
         const res_del = await client.query(query_del);
-        console.log('soft_del:', res_del);
         return "success";
       }else{
         return  "Product Not Found";
@@ -754,9 +728,7 @@ module.exports.setActiveProduct = async (data) => {
       let status_update = true;
 
       const query_select = `SELECT count(product_id) FROM product where product_id = ${data.product_id} AND is_delete = false `;
-      console.log(query_select);
       const res_query_selct = await client.query(query_select);
-      console.log(res_query_selct);
       const count = res_query_selct.rows[0].count;
       if(count == 1){
         const query_del = ` UPDATE product SET is_active = ${data.is_active}, updated_at = now() where product_id = ${data.product_id} `;
