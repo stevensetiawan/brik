@@ -208,7 +208,6 @@ exports.logout = async (req, res, next) => {
             return next(err);
           }
           res.clearCookie('connect.sid');
-          console.log("logout dari authentication:", req.session);
         });
         
         const result = {
