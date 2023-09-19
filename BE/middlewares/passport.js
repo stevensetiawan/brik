@@ -49,7 +49,6 @@ passport.use(
         })
         
         if (!user) {
-          console.log("user not found");
           return done(null, false, {
             message: 'User not found'
           })
