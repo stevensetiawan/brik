@@ -22,12 +22,10 @@ const uploadedPath = path.join(process.cwd(), 'public/travel_package')
 
 const imageUploader = multer({
     fileFilter: function (req, file, callback) {
-      console.log(file, 'ini file')
         let ext = path.extname(file.originalname);
         if (ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
             return callback(new Error('Only images are allowed'))
         }
-        console.log("lewat sini ga?")
         return callback(null, true)
     },
     limits: {

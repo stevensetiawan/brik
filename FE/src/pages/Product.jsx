@@ -26,7 +26,6 @@ const Product = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const products = useSelector(state => state.product.products)
-  console.log(products, 'ini product')
   const {
     page,
     rowsPerPage,
@@ -120,11 +119,9 @@ const deleteProduk = (id) => (event) => {
 
   const [open, setOpen] = useState(false);
   const handleClose = () => {
-    console.log("masuk handle close")
     setOpen(false);
   };
   const handleOpen = () => {
-    console.log("masuk handle open")
     setOpen(true);
   };
 

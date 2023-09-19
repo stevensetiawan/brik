@@ -12,7 +12,6 @@ const product = createSlice({
   reducers: {
     setProduct: (state, action) => {
       state.products = action.payload
-      console.log(state.products, 'ini state products')
     },
     setDetailProduct: (state, action) => {
       state.product = action.payload
@@ -35,14 +34,12 @@ const product = createSlice({
 export const getProducts = (showentry, page) => async (dispatch) => {
   try {
     const { actions } = product
-    console.log(showentry, 'ini show entry nh')
     const token = sessionStorage.getItem("token")
     const { data } = await axios.get(`http://localhost:7009/api/v1/product?showentry=${showentry}&page=${page}&key=id&order=desc`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     })
-    console.log(data, 'ini data get products')
     dispatch(actions.setProduct(data?.data))
   } catch (error) {
     console.log(error)      

@@ -10,7 +10,6 @@ const DetailProduct = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const detailProduct = useSelector(state => state.product.product)
-  console.log(detailProduct, 'ini detail product')
   const detailId = useSelector(state => state.product.detailId)
   const isLogin = useSelector(state => state.authentication.isLogin)
   useEffect(() => {
@@ -26,7 +25,6 @@ const DetailProduct = () => {
           'Authorization': `Bearer ${token}`
         }
       })
-      console.log(data, 'ini data get detail product')
       dispatch(setDetailProduct(data?.data))
       dispatch(setLoading(false))
     } catch (error) {

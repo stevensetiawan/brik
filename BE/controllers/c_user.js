@@ -4,7 +4,6 @@ const { sendResponse, paginationResponse } = require('../helpers/response');
 
 exports.create_new_user = async (req, res, next) => {
   try {
-    console.log('userData: ', req.body);
       const res_insert = await User.insert(req.body);
       const result = {
         message: "success create new data",
@@ -35,7 +34,6 @@ exports.getUserByUsername = async (req, res, next) => {
       return next(error);
     }
   } catch (err) {
-    console.log(err);
     return next(err);
   }
 };
@@ -61,7 +59,6 @@ exports.getUserId = async (req, res, next) => {
     
 
   } catch (err) {
-    console.log(err);
     return next(err);
   }
 };
@@ -96,21 +93,12 @@ exports.getUsers = async (req, res, next) => {
 
   try {
   
-    console.log("session dari authentication:", req.session);
 
     const showentry = parseInt (req.query.showentry); //rows
     const page = parseInt(req.query.page); //page ke berapa
     const order = req.query.order; //desc asc
     const key = req.query.key; //field for orders
     const search = req.query.search;
-
-    console.log("show_entries: ", showentry);
-    console.log("page: ", page);
-    console.log("order: ", order);
-    console.log("key: ", key);
-    console.log("search: ", search);
-
-
      
     // List Data 
     const resList  = await User.getDataPagination(showentry, page, order, key, search); 

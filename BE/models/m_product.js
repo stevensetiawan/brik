@@ -7,15 +7,12 @@ module.exports.create = async (data, image) => {
 
     const query_product = `INSERT INTO "product" (sku, name, description, harga, weight, height, width, length, categoryid, image, created_at, updated_at) 
                     VALUES ('${data.sku}', '${data.name}','${data.description}', '${data.harga}', '${data.height}', '${data.weight}', '${data.width}', '${data.length}', '${data.categoryid}', '${image}', now(), now()) returning *;`;
-    console.log('query_product:', query_product);
     const res_query_product = await client.query(query_product);
-    console.log('res:', res_query_product);
     
     await client.query("COMMIT");
       
     return res_query_product?.rows[0];
   } catch (err) {
-    console.log(err);
     await client.query("ROLLBACK");
     throw err;
   } finally {
@@ -38,9 +35,7 @@ module.exports.upsertProduct = async (client, product, product_detail, store, is
                         updated_at = now()
                         Returning product_id
                       `;
-    console.log('qry_upsert_prod:', qry_upsert_prod);
     const res_qry_upsert_prod = await client.query(qry_upsert_prod);
-    console.log('res:', res_qry_upsert_prod);
     const product_id = res_qry_upsert_prod.rows[0].product_id;
 
 
@@ -48,24 +43,18 @@ module.exports.upsertProduct = async (client, product, product_detail, store, is
       if(product.product_detail.length > 0){
         const query_delete_product_detail = `DELETE from product_detail where product_id = ${product_id}`
         await client.query(query_delete_product_detail)
-        console.log(query_delete_product_detail, 'ini query delete')
         let query_product_detail = `INSERT INTO "product_detail" (product_id, attribute_id, value_attribute ) `
         query_product_detail  += `   VALUES  `;
-          console.log(product.product_detail, 'ini product detail')
         for (let i = 0; i < product.product_detail.length; i++) {
           query_product_detail += ` (${product_id}, ${product.product_detail[i].attribute_id}, '${product.product_detail[i].value_attribute}') `;
           if(i < product.product_detail.length - 1){
             query_product_detail += `, `
           }
         }
-        console.log('query_product_detail:', query_product_detail);
         await client.query(query_product_detail);
       }
-    // }
     
-      console.log('sampe sini')
     if(product["Stok Display"]){
-       console.log('masuk stock display')
       let query_insert_stock_default_display  = `INSERT INTO "store_stock_product" (product_id, store_id, stock, store_price_product, stock_category ) 
                                                 VALUES (${product_id}, ${store.store_id}, ${product["Stok Display"]}, ${product["Price"]} , 'DISPLAY')`;
       query_insert_stock_default_display += ` ON CONFLICT (product_id, store_id, stock_category) `;
@@ -78,7 +67,6 @@ module.exports.upsertProduct = async (client, product, product_detail, store, is
     }
 
     if(product["Stok Warehouse"]){
-      console.log('masuk stock warehouse')
 
       let query_insert_stock_default_warehouse  = `INSERT INTO "store_stock_product" (product_id, store_id, stock, store_price_product, stock_category ) 
                                                   VALUES (${product_id}, ${store.store_id}, ${product["Stok Warehouse"]}, ${product["Price"]}, 'WAREHOUSE')`;
@@ -93,13 +81,10 @@ module.exports.upsertProduct = async (client, product, product_detail, store, is
 
     await client.query('COMMIT'); // Commit the transaction
 
-    console.log('One Data Product Success Upsert');
     return "success";
     
   } catch (err) {
-    console.log(err.message);
     await client.query("ROLLBACK");
-    console.log("Error inserting parent row:", err);
     return err;
   } 
 };
@@ -135,76 +120,6 @@ module.exports.upsertBulk = async (products, product_detail, store, is_skip_prod
     }
   }
 };
-
-// module.exports.upsert = async (product, product_detail, store) => {
-//   const client = await pool.connect();
-//   try {
-//     await client.query("BEGIN");
-
-//     let qry_upsert_prod = `INSERT INTO "product" (product_type_id, sku, product_name, product_description, keyword, is_active, created_at) 
-//                       VALUES (${product["product_type_id"]}, '${product["SKU"]}', '${product["Product Name"]}','${product["Product Name"]}', '${product["product_keyword"]}', true, now()) `;
-//     qry_upsert_prod += ` ON CONFLICT (sku) `;
-//     qry_upsert_prod += ` DO UPDATE SET 
-//                         product_name = EXCLUDED.product_name,
-//                         product_description = EXCLUDED.product_description,
-//                         keyword = EXCLUDED.keyword,
-//                         is_active = true,
-//                         updated_at = now()
-//                         Returning product_id
-//                       `;
-//     console.log('qry_upsert_prod:', qry_upsert_prod);
-//     const res_qry_upsert_prod = await client.query(qry_upsert_prod);
-//     console.log('res:', res_qry_upsert_prod);
-//     const product_id = res_qry_upsert_prod.rows[0].product_id;
-
-
-//     const query_delete_product_detail = `DELETE from product_detail where product_id = ${product_id}`
-//     await client.query(query_delete_product_detail);
-
-//     for (let i = 0; i < product_detail.length; i++) {
-//       const query_product_detail = `INSERT INTO "product_detail" (product_id, attribute_id, value_attribute ) 
-//                                     VALUES (${product_id}, ${product_detail[i].attribute_id}, '${product_detail[i].value_attribute}')`;
-//       console.log('query_product_detail:', query_product_detail);
-//       await client.query(query_product_detail);
-      
-//     }
-
-
-//     let query_insert_stock_default_display  = `INSERT INTO "store_stock_product" (product_id, store_id, stock, store_price_product, stock_category ) 
-//                                               VALUES (${product_id}, ${store.store_id}, ${product["Stok Display"]}, ${product["Price"]} , 'DISPLAY')`;
-//     query_insert_stock_default_display += ` ON CONFLICT (product_id, store_id, stock_category) `;
-//     query_insert_stock_default_display += ` DO UPDATE SET 
-//                                             stock = EXCLUDED.stock,
-//                                             store_price_product = EXCLUDED.store_price_product 
-//                                           `;
-                                            
-//     await client.query(query_insert_stock_default_display);
-
-//     let query_insert_stock_default_warehouse  = `INSERT INTO "store_stock_product" (product_id, store_id, stock, store_price_product, stock_category ) 
-//                                                 VALUES (${product_id}, ${store.store_id}, ${product["Stok Warehouse"]}, ${product["Price"]}, 'WAREHOUSE')`;
-//     query_insert_stock_default_warehouse += ` ON CONFLICT (product_id, store_id, stock_category) `;
-//     query_insert_stock_default_warehouse += ` DO UPDATE SET 
-//                                             stock = EXCLUDED.stock,
-//                                             store_price_product = EXCLUDED.store_price_product 
-//                                           `;
-
-//     await client.query(query_insert_stock_default_warehouse);
-
-//     await client.query("COMMIT");
-//     console.log('All data inserted successfully!');
-        
-//     return "success";
-    
-//   } catch (err) {
-//     console.log(err);
-//     await client.query("ROLLBACK");
-//     throw err;
-//   } finally {
-//     if (client) {
-//       client.release();
-//     }
-//   }
-// };
 
 module.exports.upsertBak = async (products, product_detail, store) => {
   const client = await pool.connect();

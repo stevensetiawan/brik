@@ -8,9 +8,6 @@ const upload = multer({ dest: 'uploads/' });
 
 exports.create_product = async (req, res, next) => {
   try {
-    console.log("masuk ga?")
-    console.log(req.body, 'ini req body')
-    console.log(req.file, 'ini req file')
     const split = req.file.originalname.split('.');
     const ext = split[split.length - 1];
     const image = await imagekit.upload({
@@ -27,7 +24,6 @@ exports.create_product = async (req, res, next) => {
     return sendResponse(result, res);
 
   } catch (error) {
-    console.log(error, 'ini errornya')
     return next(error);
   }
 };
@@ -36,7 +32,6 @@ exports.updateProduct = async (req, res, next) => {
   try {
     const id = req.params.id
     if(req.file){
-      console.log("masuk update with req file")
       const split = req.file.originalname.split('.');
       const ext = split[split.length - 1];
       const image = await imagekit.upload({
@@ -45,7 +40,6 @@ exports.updateProduct = async (req, res, next) => {
       })
       req.body.image = image?.url
       const res_update = await Product.updateProduct(id, req.body);
-      console.log(res_update);
       if(res_update.status == false){
         const result = {
           err: res_update.message,
@@ -62,9 +56,7 @@ exports.updateProduct = async (req, res, next) => {
         return sendResponse(result, res);
       }
     } else {
-      console.log("masuk update without req file")
       const res_update = await Product.updateProduct(id, req.body);
-      console.log(res_update);
 
       if(res_update.status == false){
         const result = {
@@ -89,8 +81,6 @@ exports.updateProduct = async (req, res, next) => {
 
 exports.setActiveProduct = async (req, res, next) => {
   try {
-    console.log(req.body);
-
     const res_update = await Product.setActiveProduct(req.body);
 
     if(res_update.status == false){
@@ -124,13 +114,7 @@ exports.getProducts = async (req, res, next) => {
     const key = req.query.key; //field for orders
     const search = req.query.search;
     // const is_active = req.query.is_active;
-    
-    console.log("show_entries: ", showentry);
-    console.log("page: ", page);
-    console.log("order: ", order);
-    console.log("key: ", key);
-    console.log("search: ", search);
-    
+        
     const payload = {
       showentry: showentry,
       search: search,
@@ -152,7 +136,6 @@ exports.getProducts = async (req, res, next) => {
       return paginationResponse(result, res);
     }
   } catch (err) {
-    console.log(err);
     return next(err);
   }
      
@@ -166,7 +149,6 @@ exports.getDetailProduct = async (req, res, next) => {
     }
 
     let res_query = await Product.findDetailProduct(data);
-    console.log("res_query1: ", res_query);
 
     if(res_query){
       const result = {
@@ -183,7 +165,6 @@ exports.getDetailProduct = async (req, res, next) => {
       return sendResponse(result, res);
     }
   } catch (err) {
-    console.log(err);
     return next(err);
   }
 };

@@ -87,7 +87,6 @@ const ManageOrder = () => {
         }
       })
     } catch (error) {
-      console.log(error)
       dispatch(
         handleClick({
           message: error.message,

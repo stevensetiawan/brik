@@ -84,7 +84,6 @@ const getCategories = async () => {
         'Authorization': `Bearer ${token}`
       }
     })
-    console.log(data, 'ini datanya')
     dispatch(setCategory(data.data))
     dispatch(setLoadingCategory(false))
   } catch (error) {
@@ -97,7 +96,6 @@ const getCategories = async () => {
       event.preventDefault()
       const formData = new FormData()
       const { image, name, harga, description, height, weight, length, width, sku, categoryid } = getForm
-      console.log(getForm, 'ini isinya')
         formData.append('image', image)
         formData.append('name', name)
         formData.append('harga', harga)

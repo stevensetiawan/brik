@@ -13,11 +13,9 @@ const Portal = () => {
   const isLoading = useSelector(state => state.travel_package.isLoading)
   const isLogin = useSelector(state => state.authentication.isLogin)
   const isAdmin = useSelector(state => state.authentication.isAdmin)
-  console.log(products?.data?.[0]?.id, 'ini products')
 
   const detailProduct = id => event => {
     event.preventDefault()
-    console.log("masuk", id)
     dispatch(setDetailId(id))
     navigate('/detail-product')
   }

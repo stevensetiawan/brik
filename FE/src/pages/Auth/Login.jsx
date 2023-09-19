@@ -39,7 +39,6 @@ const Login = () => {
     const { email, password } = getForm
     await signingIn(email, password)
       .then(response => {
-        console.log("masuk nh loginnya", response)
         sessionStorage.setItem("token", response?.data?.data?.token)
         dispatch(token())
         dispatch(

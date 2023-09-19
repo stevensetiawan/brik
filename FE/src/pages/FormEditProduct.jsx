@@ -19,7 +19,6 @@ const FormEditProduct = () => {
   const onChangeFile = key => event => dispatch(update({[key]: event.target.files[0] }))
   const detailId = useSelector(state => state.product.detailId)
   const detailProduct = useSelector(state => state.product.product)
-  console.log(detailProduct,'ini detail product')
   const categories = useSelector(state => state.category.categories)
   const isLogin = useSelector(state => state.authentication.isLogin)
   const isAdmin = useSelector(state => state.authentication.isAdmin)
@@ -50,9 +49,7 @@ const FormEditProduct = () => {
       })
       imageName = data?.data?.image
       const payload = data?.data
-      console.log(data, 'ini datanya get product')
       dispatch(setDetailProduct(payload))
-      console.log(detailProduct, 'ini detail product di get product')
       dispatch(setLoading(false))
     } catch (error) {
       console.log(error)      
@@ -68,7 +65,6 @@ const FormEditProduct = () => {
           'Authorization': `Bearer ${token}`
         }
       })
-      console.log(data, 'ini datanya')
       dispatch(setCategory(data.data))
       dispatch(setLoadingCategory(false))
     } catch (error) {

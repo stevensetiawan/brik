@@ -62,7 +62,6 @@ passport.use(
         }
         
         const validate = await isValidPassword(password, user?.password)
-        console.log(validate,'ini validate');
 
 
         if (!validate) {
@@ -99,7 +98,6 @@ exports.auth = async (req, res, next) => {
     async (err, user, info) => {
       try {
         if (err) {
-          console.log(err,'ini error')
           const error = new Error('An error occurred.');
           return next(error);
         } else if (!user) {
@@ -201,14 +199,7 @@ passport.use(
 )
 
 exports.logout = async (req, res, next) => {
-  try {
-
-    console.log("logout dari authentication:", req.session);
-    console.log("req.cookies['jwt']: ",req.cookies['jwt'])
-    // console.log("req.logout:", req.logOut());
-    
-  
-  
+  try {  
     // Remove session data on server-side
     req.logout(function(err) {
       if (err) { return next(err); }
@@ -230,46 +221,6 @@ exports.logout = async (req, res, next) => {
     });
    
   } catch (error) {
-    console.log("error >>>", error)
     return next(error);
   }
 }
-
-// exports.logout = async (req, res, next) => {
-//   console.log("admin logout");
-//   try {
-
-//     if (req.isAuthenticated()) {
-//         console.log("logout dari authentication:", req.session);
-//         req.logout(function(err) {
-//           if (err) { return next(err); }
-           
-//         });
-     
-        
-//           // req.flushdb(function(err) {
-//           //   if (err) { return next(err); }
-//           //     console.log(err)
-//           // });
-
-//         res.clearCookie('connect.sid')
-//         const result = {
-//           err: null,
-//           message: "logout success",
-//           data: "logout success",
-//           code: 200
-//         }
-//           return res.status(200).send(result);
-//           // return sendResponse(result, res);
-//             // redis.flushdb()
-      
-//     } else {
-//         console.log("logout dari  tidak authentication");
-//     }
-
-
-//   } catch (error) {
-//     console.log("error >>>", error)
-//     return next(error);
-//   }
-// };
