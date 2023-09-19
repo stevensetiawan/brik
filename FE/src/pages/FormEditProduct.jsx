@@ -136,7 +136,6 @@ const FormEditProduct = () => {
           }
         })
     } catch (e) {
-      console.log(e,"ini erropr")
       dispatch(
         handleClick({
           message: `'error: '${e}`,
